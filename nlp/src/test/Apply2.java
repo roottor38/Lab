@@ -1,8 +1,5 @@
 package test;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,7 +16,7 @@ import org.bitbucket.eunjeon.seunjeon.Analyzer;
 public class Apply2 {
 	public static void main(String[] args) {
 		try {
-			frequency(fileRead("돈까스").orElse("내용 없음")).forEachOrdered(System.out::println);
+			frequency(fileRead("창원").orElse("내용 없음")).forEachOrdered(System.out::println);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

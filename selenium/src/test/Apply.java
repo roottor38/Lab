@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import org.openqa.selenium.NoSuchElementException;
+
+import com.google.common.base.Optional;
+
 public class Apply {
 	public static void main(String[] args) {
-		String kwd = "돈까스";
+		String kwd = "창원";
 		try {
 			makeFile(kwd);
 		} catch (IOException e) {
@@ -32,12 +36,16 @@ public class Apply {
 			.stream().forEach(v -> contents.add(v.getAttribute("href")));
 			System.out.println("== 말뭉치 생성 시작 ==");
 			for(String url : contents) {
+				System.out.println(url);
 				s.access(url);
 				sleep(0.3);
-				corpus += s.find("//*[@id=\"react-root\"]/section/main/div/div/article/div[2]/div[1]/ul/div/li/div/div/div[2]/span")
-						.getText().replace("\n", "");
-				corpus += "\n";
-				System.out.println(new StringBuilder().append(url).append(" ").append(corpus.length()).toString());
+				try {
+					corpus += s.find("//*[@id=\"react-root\"]/section/main/div/div/article/div[2]/div[1]/ul/div/li/div/div/div[2]/span")
+							.getText().replace("\n", "");
+					corpus += "\n";
+				} catch (NoSuchElementException e) {
+					e.printStackTrace();
+				}
 			}
 		} finally {
 			s.quit();
