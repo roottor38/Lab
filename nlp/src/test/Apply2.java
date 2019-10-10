@@ -16,7 +16,7 @@ import org.bitbucket.eunjeon.seunjeon.Analyzer;
 public class Apply2 {
 	public static void main(String[] args) {
 		try {
-			frequency(fileRead("창원").orElse("내용 없음")).forEachOrdered(System.out::println);
+			frequency(fileRead("맥주").orElse("내용 없음")).forEachOrdered(System.out::println);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

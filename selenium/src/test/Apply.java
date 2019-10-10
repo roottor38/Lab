@@ -12,7 +12,7 @@ import com.google.common.base.Optional;
 
 public class Apply {
 	public static void main(String[] args) {
-		String kwd = "창원";
+		String kwd = "맥주";
 		try {
 			makeFile(kwd);
 		} catch (IOException e) {
