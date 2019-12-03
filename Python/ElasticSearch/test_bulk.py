@@ -59,10 +59,10 @@ es.indices.create(index=index_name, body=body)
 body = []
 url = "http://www.inven.co.kr/board/lineagem/5019"
 community = "인벤"
-for el in map(lambda el : el['href'], BeautifulSoup(requests.get(url).text, "lxml").select(".tr a")):    
+for i, el in enumerate(map(lambda el : el['href'], BeautifulSoup(requests.get(url).text, "lxml").select(".tr a"))):    
     print(el)
     sleep(0.3)
-    body.append({"create" : {"_index" : index_name, "_id" : el}})
+    body.append({"create" : {"_index" : index_name, "_id" : i+1}})
     soup = BeautifulSoup(requests.get(el).text, "lxml")
     body.append({"url" : el,
                  "community" : community,

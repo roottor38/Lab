@@ -1,3 +1,5 @@
+# https://elasticsearch-py.readthedocs.io/en/master/
+
 from datetime import datetime
 from elasticsearch import Elasticsearch
 es = Elasticsearch()
