@@ -6,5 +6,6 @@
     * Morph_Seunjeon : 세종 프로젝트 기반 한글 형태소 분석기 Seunjoen (은전한닢)
     * NoSQL_ElasticSearch_HighLevelClient : NoSQL ElasticSearch 활용을 위한 HighLevelClient (각종 API 테스트)
     * Regex : 자바 정규표현식
+
 * **Python**
     * NoSQL_ElasticSearch : NoSQL ElasticSearch 활용을 위한 라이브러리 (각종 API 테스트)
