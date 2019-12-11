@@ -1,22 +1,19 @@
-# pip install konlpy
 from elasticsearch import Elasticsearch
-from konlpy.tag import Okt
 from bs4 import BeautifulSoup
 from time import sleep
-from functools import reduce
 from collections import Counter
-import requests, re, csv
-def save_csv(name, data):
-    print("# CSV 파일 저장")
+from konlpy.tag import Okt
+from functools import reduce 
+import requests, re, json
+
+def save_json(name, data):
+    print("# JSON 파일 저장")
     with open(name, "w", encoding="utf-8", newline="") as f:
-        # csvwriter = csv.writer(f)
-        # for row in data:
-        #     csvwriter.writerow(row)
-        csv.writer(f).writerows(data)
+        f.write(json.dumps(data, indent="\t", ensure_ascii=False)) # 저장시 유니코드 문제
+        # json.dump(data, f, indent="\t", ensure_ascii=False)
 def scraping(url, index_name, es=None):
     if es is None : es = Elasticsearch()
     if es.indices.exists(index_name): es.indices.delete(index_name)
-        
     settings = {
         "index": {
         "analysis": {
@@ -80,22 +77,23 @@ def scraping(url, index_name, es=None):
     print("# 벌크 저장 완료")
     es.indices.refresh(index=index_name)
     print("# 엘라스틱 서치 반영 완료")
-def read_text(index_name, es=None):
+def read_aggs(index_name, es=None):
+    print("# 활동량 통계치 검색")
     if es is None : es = Elasticsearch()
     if not es.indices.exists(index_name): return None
-
-    # res = es.search(index=index_name,
-    #                     body={"query": {"match_all": {}}, "size" : 60})["hits"]["hits"]
-    # reduce로 합쳐줍니다
+    body = {"query": {"match_all": {}}, "size": 0,
+            "aggs": {"hits_aggs": {"stats": {"field": "hits"}}}}
+    return es.search(index_name, body=body)
+def read_text(index_name, es=None):
+    print("# 말뭉치 만들기")
+    if es is None : es = Elasticsearch()
+    if not es.indices.exists(index_name): return None
     return reduce(lambda x, y: x + " " + y['_source']['title'] + " " + y['_source']['body'],
               es.search(index=index_name,
-                        body={"query": {"match_all": {}}, "size" : 60})["hits"]["hits"], "")
+                        body={"query": {"match_all": {}}, "size" : 1000})["hits"]["hits"], "")
 def analysis_text(text):
     print("# 형태소 분석")
     # 단어의 길이가 2 이상의 명사들만 분석
     return Counter(list(filter(lambda x: len(x) > 1, Okt().nouns(text)))).most_common()
-
-# 크롤링하는 메소드
-# scraping("http://www.inven.co.kr/board/lineagem/5019", "test-okt")
-# 워드 카운트하여 10회 이상 언급된 값들만 csv로 저장
-save_csv("word_count.csv", filter(lambda x: x[1] >= 10, analysis_text(read_text("test-bulk"))))
+save_json("bbs_count.json", read_aggs("test-okt")['aggregations']["hits_aggs"])
+save_json("word_count.json", dict(analysis_text(read_text("test-okt"))))
